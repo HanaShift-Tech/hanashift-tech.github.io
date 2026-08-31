@@ -5,7 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HanaShift Tech — Cross-cultural communication between Europe and Japan</title>
 <meta name="description" content="An AI assistant that writes and reads Japanese business communication in the right register, and explains every choice as it makes it.">
-<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="assets/favicon-16.png" type="image/png" sizes="16x16">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#16234F">
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -55,9 +60,27 @@
       <label for="c">What's your main communication challenge?</label>
       <textarea id="c" placeholder="(Optional)"></textarea>
 
+      <!-- ATTIVA QUANDO VUOI: nome azienda + numero di utenti.
+           Togli questo commento e i due campi compaiono nel form.
+           Il JS li legge gia' se ci sono, e li ignora se non ci sono.
+           Ricorda di aggiungere anche le colonne in apps-script/Code.gs.
+
+      <label for="co">Company</label>
+      <input id="co" placeholder="Acme S.r.l." autocomplete="organization">
+
+      <label for="seats">How many people would use it?</label>
+      <select id="seats">
+        <option value="">Select…</option>
+        <option>1–5</option>
+        <option>6–20</option>
+        <option>21–100</option>
+        <option>More than 100</option>
+      </select>
+      -->
+
       <div style="position:absolute;left:-9999px" aria-hidden="true">
-        <label for="company">Company (leave empty)</label>
-        <input id="company" type="text" tabindex="-1" autocomplete="off">
+        <label for="hp_website">Website (leave empty)</label>
+        <input id="hp_website" type="text" tabindex="-1" autocomplete="off">
       </div>
 
       <label style="display:flex;gap:9px;align-items:flex-start;font-weight:400;font-size:12.5px;line-height:1.5;margin-bottom:16px;cursor:pointer">
@@ -113,7 +136,8 @@
 
 <script src="assets/demo.js"></script>
 <script>
-
+/* Endpoint del form. Vedi apps-script/Code.gs per il setup.
+   Incolla qui l'URL della distribuzione Apps Script (finisce con /exec). */
 const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyyRyc6ujHx_OUegokKpyKIpXwE2NkzuU6CmTwWmoHFrar3cj2KbCZhE4tIMyyn8IKR/exec';
 
 const btn = document.getElementById('submit');
@@ -121,12 +145,16 @@ const fine = document.querySelector('.fine');
 const DEFAULT_FINE = fine.textContent;
 
 function say(msg) { fine.textContent = msg; }
+/* legge un campo se esiste, stringa vuota se e' ancora commentato nell'HTML */
+function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
 
 btn.addEventListener('click', async function () {
-  const name = document.getElementById('n').value.trim();
-  const email = document.getElementById('e').value.trim();
-  const message = document.getElementById('c').value.trim();
-  const company = document.getElementById('company').value; // honeypot
+  const name = val('n');
+  const email = val('e');
+  const message = val('c');
+  const company = val('co');      // attivo solo se il campo e' scommentato
+  const seats = val('seats');     // idem
+  const website = val('hp_website'); // honeypot
   const consent = document.getElementById('consent').checked;
 
   if (!name || !email) return say('Please fill in your name and work email.');
@@ -144,7 +172,7 @@ btn.addEventListener('click', async function () {
     const res = await fetch(FORM_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ name, email, message, company, page: location.href })
+      body: JSON.stringify({ name, email, company, seats, message, website, page: location.href })
     });
     const out = await res.json();
     if (!out.ok) throw new Error(out.error || 'rejected');
