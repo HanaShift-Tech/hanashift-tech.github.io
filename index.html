@@ -53,36 +53,55 @@
     </section>
 
     <aside class="form" id="form">
-      <label for="n">Full Name</label>
-      <input id="n" placeholder="Jane Smith" autocomplete="name">
-      <label for="e">Work Email</label>
-      <input id="e" type="email" placeholder="name@company.com" autocomplete="email">
-      <label for="c">What's your main communication challenge?</label>
-      <textarea id="c" placeholder="(Optional)"></textarea>
-      <label for="co">Company</label>
-      <input id="co" placeholder="Acme S.r.l." autocomplete="organization">
+      <div class="form-head">
+        <span class="badge">EARLY ACCESS</span>
+        <h2>Request beta access</h2>
+        <p>Tell us who you are and we'll get back to you with an invite.</p>
+      </div>
 
-      <label for="seats">How many people would use it?</label>
-      <select id="seats">
-        <option value="">Select…</option>
-        <option>1–5</option>
-        <option>6–20</option>
-        <option>21–100</option>
-        <option>More than 100</option>
-      </select>
+      <div class="field">
+        <label for="n">Full name</label>
+        <input id="n" placeholder="Jane Smith" autocomplete="name">
+      </div>
 
-      <div style="position:absolute;left:-9999px" aria-hidden="true">
+      <div class="field">
+        <label for="e">Work email</label>
+        <input id="e" type="email" placeholder="name@company.com" autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="co">Company</label>
+        <input id="co" placeholder="Acme S.r.l." autocomplete="organization">
+      </div>
+
+      <div class="field">
+        <label for="seats">How many people would use it?</label>
+        <select id="seats">
+          <option value="">Select…</option>
+          <option>1–5</option>
+          <option>6–20</option>
+          <option>21–100</option>
+          <option>More than 100</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="c">What's your main communication challenge? <span class="opt-tag">optional</span></label>
+        <textarea id="c" placeholder="e.g. we keep losing momentum with a Japanese distributor"></textarea>
+      </div>
+
+      <div class="hp" aria-hidden="true">
         <label for="hp_website">Website (leave empty)</label>
         <input id="hp_website" type="text" tabindex="-1" autocomplete="off">
       </div>
 
-      <label style="display:flex;gap:9px;align-items:flex-start;font-weight:400;font-size:12.5px;line-height:1.5;margin-bottom:16px;cursor:pointer">
-        <input type="checkbox" id="consent" style="width:auto;margin:2px 0 0;flex:none">
+      <label class="consent" for="consent">
+        <input type="checkbox" id="consent">
+        <span class="box" aria-hidden="true"></span>
         <span>I agree to be contacted about the beta, and I've read the
-          <a href="privacy.html" style="color:var(--navy)">Privacy Policy</a>.</span>
+          <a href="privacy.html">Privacy Policy</a>.</span>
       </label>
 
-      <button class="gold" type="button" id="submit">REQUEST BETA ACCESS</button>
+      <button class="gold" type="button" id="submit">Request beta access</button>
       <p class="fine">Limited access — we onboard new companies in small batches.</p>
     </aside>
 
@@ -129,39 +148,54 @@
 
 <script src="assets/demo.js"></script>
 <script>
-/* Endpoint del form. Vedi apps-script/Code.gs per il setup.
-   Incolla qui l'URL della distribuzione Apps Script (finisce con /exec). */
+
 const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyyRyc6ujHx_OUegokKpyKIpXwE2NkzuU6CmTwWmoHFrar3cj2KbCZhE4tIMyyn8IKR/exec';
 
 const btn = document.getElementById('submit');
 const fine = document.querySelector('.fine');
 const DEFAULT_FINE = fine.textContent;
 
-function say(msg) { fine.textContent = msg; }
-/* legge un campo se esiste, stringa vuota se e' ancora commentato nell'HTML */
+function say(msg, kind) {
+  fine.textContent = msg;
+  fine.className = 'fine' + (kind ? ' ' + kind : '');
+}
+function reset(msg) { say(msg || DEFAULT_FINE); }
+function mark(id, bad) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('invalid', !!bad);
+}
 function val(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+['n', 'e', 'c', 'co', 'seats'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => { mark(id, false); if (fine.classList.contains('err')) reset(); });
+});
 
 btn.addEventListener('click', async function () {
   const name = val('n');
   const email = val('e');
   const message = val('c');
-  const company = val('co');      // attivo solo se il campo e' scommentato
-  const seats = val('seats');     // idem
-  const website = val('hp_website'); // honeypot
+  const company = val('co');      
+  const seats = val('seats');     
+  const website = val('hp_website');
   const consent = document.getElementById('consent').checked;
 
-  if (!name || !email) return say('Please fill in your name and work email.');
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return say('That email address doesn\'t look right.');
-  if (!consent) return say('Please tick the consent box so we can contact you.');
+  mark('n', false); mark('e', false);
 
-  if (!FORM_ENDPOINT) return say('Demo mode: no endpoint configured yet (see FORM_ENDPOINT in index.html).');
+  if (!name) { mark('n', true); document.getElementById('n').focus(); return say('Please tell us your name.', 'err'); }
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+    mark('e', true); document.getElementById('e').focus();
+    return say('That email address doesn\'t look right.', 'err');
+  }
+  if (!consent) return say('Please tick the consent box so we can contact you.', 'err');
+
+  if (!FORM_ENDPOINT) return say('Demo mode: no endpoint configured yet (see FORM_ENDPOINT in index.html).', 'err');
 
   btn.disabled = true;
-  btn.textContent = 'SENDING…';
-  say('Sending…');
+  btn.textContent = 'Sending…';
+  say('Sending your request…');
 
   try {
-    /* text/plain evita il preflight CORS, che Apps Script non gestisce. */
     const res = await fetch(FORM_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -170,13 +204,13 @@ btn.addEventListener('click', async function () {
     const out = await res.json();
     if (!out.ok) throw new Error(out.error || 'rejected');
 
-    btn.textContent = 'REQUEST RECEIVED';
-    say('Thanks — we\'ll be in touch shortly.');
+    btn.textContent = 'Request received';
+    say('Thanks — we\'ll be in touch shortly.', 'ok');
   } catch (err) {
     btn.disabled = false;
-    btn.textContent = 'REQUEST BETA ACCESS';
-    say('Something went wrong. Please email us directly instead.');
-    setTimeout(() => say(DEFAULT_FINE), 6000);
+    btn.textContent = 'Request beta access';
+    say('Something went wrong. Please email us directly instead.', 'err');
+    setTimeout(reset, 6000);
   }
 });
 </script>
