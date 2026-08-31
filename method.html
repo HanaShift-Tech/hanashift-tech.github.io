@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Our Method — HanaShift Tech</title>
+<meta name="description" content="How HanaShift picks a Japanese register and explains every choice it makes.">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <a class="brand" href="index.html">
+      <div class="petals">
+        <span style="background:#E8577F"></span><span style="background:#3B6FD4"></span>
+        <span style="background:#3FAE7A"></span><span style="background:#F0B849"></span>
+        <span style="background:#D94F4F"></span>
+      </div>
+      <div class="wordmark"><strong>HanaShift</strong><em>T E C H</em></div>
+    </a>
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="method.html" aria-current="page">Our Method</a>
+      <a href="products.html">Products</a>
+      <a href="index.html#form" class="navcta">Request Beta</a>
+    </div>
+  </nav>
+</div>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>Our Method</h1>
+    <p>We don't translate sentences. We choose the relationship the sentence implies — and then we show you the reasoning.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="wrap">
+    <p class="eyebrow">THE CORE IDEA</p>
+    <h2>One sentence, three relationships</h2>
+    <p class="lede">Below is the same English message — <em>"Confirming Tuesday's meeting. I'll send the documents."</em> —
+      written for three different readers. Nothing about the content changes. Everything about the verbs does.</p>
+
+    <div class="reg">
+      <div class="head">"Confirming Tuesday's meeting. I'll send the documents."</div>
+
+      <div class="rowx">
+        <div class="who">Senior client<small>Outside your company, above you</small></div>
+        <div class="say">
+          <div class="jp">いつもお世話になっております。火曜日の会議の件、承知いたしました。関連資料につきましては、本日中に送付させていただきます。</div>
+          <p><strong>Sonkeigo + kenjōgo.</strong> 承知いたしました lowers your own action in front of the reader.
+            送付させていただきます literally asks permission to send — excessive in English, standard here.</p>
+        </div>
+      </div>
+
+      <div class="rowx">
+        <div class="who">Colleague<small>Inside your company, same level</small></div>
+        <div class="say">
+          <div class="jp">お疲れ様です。火曜日の会議、了解しました。資料は今日中に送ります。</div>
+          <p><strong>Teineigo.</strong> The opening switches to the internal お疲れ様です. 了解しました, which would have
+            been curt to the client, is correct between peers — and the humble forms would now sound sarcastic.</p>
+        </div>
+      </div>
+
+      <div class="rowx">
+        <div class="who">Supplier<small>Outside your company, below you</small></div>
+        <div class="say">
+          <div class="jp">いつもお世話になっております。火曜日の会議の件、承知いたしました。資料は本日中にお送りいたします。</div>
+          <p><strong>Moderate keigo.</strong> Politeness towards outsiders stays, but asking permission to act would
+            misread the negotiating position. お送りいたします is courteous without submitting.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section alt">
+  <div class="wrap">
+    <p class="eyebrow">THE THREE REGISTERS</p>
+    <h2>What the system is actually choosing between</h2>
+    <div class="grid g3">
+      <div class="tile">
+        <span class="tag">尊敬語</span>
+        <h3>Sonkeigo — respectful</h3>
+        <p>Raises the <em>other person's</em> actions. Used when you describe what your client, your superior or a guest
+          does. Applying it to your own actions is a well-known and immediately visible mistake.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">謙譲語</span>
+        <h3>Kenjōgo — humble</h3>
+        <p>Lowers <em>your own</em> actions relative to the listener. This is where most of the work happens in business
+          email, and where automatic translation almost never goes.</p>
+      </div>
+      <div class="tile">
+        <span class="tag">丁寧語</span>
+        <h3>Teineigo — polite</h3>
+        <p>The neutral polite layer — the ～です／～ます forms taught first to learners. Correct almost everywhere, and
+          exactly for that reason too flat where a relationship needs marking.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="wrap">
+    <p class="eyebrow">HOW IT WORKS</p>
+    <h2>One model, specialised per register</h2>
+    <p class="lede">Choosing a register is not a bigger-model problem. It is a data problem — which is where most of our
+      work goes.</p>
+    <div class="grid g2">
+      <div class="tile">
+        <h3>An open base model, specialised</h3>
+        <p>We start from an open-weight, commercially licensed model and specialise it with lightweight adapters — one
+          per register — rather than maintaining several separate models. One base model, and a register that switches
+          in a few megabytes.</p>
+      </div>
+      <div class="tile">
+        <h3>The explanation is part of the output</h3>
+        <p>The model returns the corrected phrasing <em>and</em> the reason for it: which form was used, and what it
+          signals about the relationship. Over a few weeks the user stops needing the tool for routine messages — which
+          is the point.</p>
+      </div>
+      <div class="tile">
+        <h3>How we handle your text</h3>
+        <p>Messages are processed on our servers to generate the reply, encrypted in transit and at rest. We do not use
+          customer correspondence to train our models unless you explicitly opt in, and you can delete your history at
+          any time.</p>
+      </div>
+      <div class="tile">
+        <h3>Validated by native speakers</h3>
+        <p>Our training pairs are reviewed by native speakers with business experience, because a confidently wrong
+          explanation teaches the user something harmful — worse than giving no answer at all.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section alt">
+  <div class="wrap">
+    <p class="eyebrow">WHERE WE ARE</p>
+    <h2>Honest about the stage</h2>
+    <p class="lede">HanaShift is pre-launch. The guided demo on the homepage uses pre-scripted examples reviewed by hand;
+      the underlying model is in development. We would rather show you a real scope than a rendered promise.</p>
+    <div class="grid g3">
+      <div class="tile alt"><span class="tag">NOW</span><h3>Text, English &harr; Japanese</h3>
+        <p>Register selection, correction and explanation for written business communication.</p></div>
+      <div class="tile alt"><span class="tag soon">NEXT</span><h3>Voice</h3>
+        <p>Speech input and output, plus listening and repetition exercises for pronunciation.</p></div>
+      <div class="tile alt"><span class="tag soon">PLANNED</span><h3>Full audio interface</h3>
+        <p>A voice-first mode so the product is usable by blind and low-vision professionals.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="strip">
+  <div class="wrap">
+    <div><i></i>CROSS-CULTURAL</div><div><i></i>AI CHATBOTS</div>
+    <div><i></i>HUMAN CENTERED</div><div><i></i>TECHNOLOGY</div>
+  </div>
+</div>
+
+<div class="wrap"><footer>
+  <span>&copy; 2026 HanaShift TECH. Based in Italy.</span>
+  <span><a href="privacy.html">Privacy Policy</a> &nbsp;&nbsp; <a href="terms.html">Terms of Service</a></span>
+</footer></div>
+
+</body>
+</html>
