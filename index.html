@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>HanaShift Tech — Cross-cultural communication between Europe and Japan</title>
 <meta name="description" content="An AI assistant that writes and reads Japanese business communication in the right register, and explains every choice as it makes it.">
+<link rel="icon" href="assets/favicon.png" type="image/png">
 <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
@@ -12,11 +13,7 @@
 <div class="wrap">
   <nav>
     <a class="brand" href="index.html">
-      <div class="petals">
-        <span style="background:#E8577F"></span><span style="background:#3B6FD4"></span>
-        <span style="background:#3FAE7A"></span><span style="background:#F0B849"></span>
-        <span style="background:#D94F4F"></span>
-      </div>
+      <img class="mark" src="assets/mark.png" alt="" width="46" height="46">
       <div class="wordmark"><strong>HanaShift</strong><em>T E C H</em></div>
     </a>
     <div class="navlinks">
@@ -57,6 +54,18 @@
       <input id="e" type="email" placeholder="name@company.com" autocomplete="email">
       <label for="c">What's your main communication challenge?</label>
       <textarea id="c" placeholder="(Optional)"></textarea>
+
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label for="company">Company (leave empty)</label>
+        <input id="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+
+      <label style="display:flex;gap:9px;align-items:flex-start;font-weight:400;font-size:12.5px;line-height:1.5;margin-bottom:16px;cursor:pointer">
+        <input type="checkbox" id="consent" style="width:auto;margin:2px 0 0;flex:none">
+        <span>I agree to be contacted about the beta, and I've read the
+          <a href="privacy.html" style="color:var(--navy)">Privacy Policy</a>.</span>
+      </label>
+
       <button class="gold" type="button" id="submit">REQUEST BETA ACCESS</button>
       <p class="fine">Limited access — we onboard new companies in small batches.</p>
     </aside>
@@ -98,48 +107,55 @@
 </div>
 
 <div class="wrap"><footer>
-  <span>&copy; 2026 HanaShift TECH. Based in Italy.</span>
+  <span class="flogo"><img src="assets/mark.png" alt=""> &copy; 2026 HanaShift TECH. Based in Italy.</span>
   <span><a href="privacy.html">Privacy Policy</a> &nbsp;&nbsp; <a href="terms.html">Terms of Service</a></span>
 </footer></div>
 
 <script src="assets/demo.js"></script>
 <script>
-/* GitHub Pages serves static files only — there is no backend to post to.
-   Paste a form endpoint here (Formspree, Getform, Google Apps Script, etc.)
-   and the form starts working. Leave empty and it just explains itself. */
-const FORM_ENDPOINT = '';
+
+const FORM_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyyRyc6ujHx_OUegokKpyKIpXwE2NkzuU6CmTwWmoHFrar3cj2KbCZhE4tIMyyn8IKR/exec';
 
 const btn = document.getElementById('submit');
 const fine = document.querySelector('.fine');
+const DEFAULT_FINE = fine.textContent;
+
+function say(msg) { fine.textContent = msg; }
 
 btn.addEventListener('click', async function () {
   const name = document.getElementById('n').value.trim();
   const email = document.getElementById('e').value.trim();
-  const msg = document.getElementById('c').value.trim();
+  const message = document.getElementById('c').value.trim();
+  const company = document.getElementById('company').value; // honeypot
+  const consent = document.getElementById('consent').checked;
 
-  if (!name || !email) { fine.textContent = 'Please fill in your name and work email.'; return; }
-  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { fine.textContent = 'That email address doesn\'t look right.'; return; }
+  if (!name || !email) return say('Please fill in your name and work email.');
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return say('That email address doesn\'t look right.');
+  if (!consent) return say('Please tick the consent box so we can contact you.');
 
-  if (!FORM_ENDPOINT) {
-    fine.textContent = 'Demo mode: no form endpoint configured yet (see FORM_ENDPOINT in index.html).';
-    return;
-  }
+  if (!FORM_ENDPOINT) return say('Demo mode: no endpoint configured yet (see FORM_ENDPOINT in index.html).');
 
   btn.disabled = true;
   btn.textContent = 'SENDING…';
+  say('Sending…');
+
   try {
+    /* text/plain evita il preflight CORS, che Apps Script non gestisce. */
     const res = await fetch(FORM_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({ name: name, email: email, message: msg })
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ name, email, message, company, page: location.href })
     });
-    if (!res.ok) throw new Error(res.status);
+    const out = await res.json();
+    if (!out.ok) throw new Error(out.error || 'rejected');
+
     btn.textContent = 'REQUEST RECEIVED';
-    fine.textContent = 'Thanks — we\'ll be in touch shortly.';
+    say('Thanks — we\'ll be in touch shortly.');
   } catch (err) {
     btn.disabled = false;
     btn.textContent = 'REQUEST BETA ACCESS';
-    fine.textContent = 'Something went wrong. Please email us directly instead.';
+    say('Something went wrong. Please email us directly instead.');
+    setTimeout(() => say(DEFAULT_FINE), 6000);
   }
 });
 </script>
